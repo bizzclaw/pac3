@@ -481,7 +481,9 @@ local function set_mesh(part, mesh)
 	end
 	
 	-- temp
-	part.Entity:SetRenderBounds(Vector(1, 1, 1)*-300, Vector(1, 1, 1)*300)	
+	if IsValid(part.Entity) then
+		part.Entity:SetRenderBounds(Vector(1, 1, 1)*-300, Vector(1, 1, 1)*300)
+	end
 end
 
 function PART:SetModel(modelPath)
