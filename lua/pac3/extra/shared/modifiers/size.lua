@@ -23,10 +23,16 @@ function pacx.GetPlayerSize(ply)
 end
 
 function pacx.SetPlayerSize(ply, f, force, entity2)
-
 	local scale = math.Clamp(f, def.MIN_PL_SIZE, def.MAX_PL_SIZE)
-	local olds = ply.pac_player_size or 1
 
+	local allowed, reason = pac.CallHook("CanChangeSize", ply, scale)
+	print(allowed, reason)
+	if allowed == false then
+		pac.Message(reason or "the server doesn't want you to change your scale for some reason")
+		return
+	end
+
+	local olds = ply.pac_player_size or 1
 	if olds==scale and not force then return end
 
 	ply.pac_player_size = scale

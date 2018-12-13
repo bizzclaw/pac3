@@ -41,7 +41,12 @@ if SERVER then
 
 	local ALLOW_TO_CHANGE_MODEL = pacx.AddServerModifier("model", function(data, owner)
 		if not data then
-			pacx.SetPlayerModel(owner, player_manager.TranslatePlayerModel(owner:GetInfo("cl_playermodel")))
+			local resetModel = pac.CallHook("ResetModel", owner)
+
+			if resetModel != false then
+				local model = resetModel or player_manager.TranslatePlayerModel(owner:GetInfo("cl_playermodel"))
+				pacx.SetPlayerModel(owner, resetModel)
+			end
 		else
 			local model
 
