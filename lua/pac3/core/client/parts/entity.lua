@@ -158,6 +158,17 @@ end
 function PART:UpdateScale(ent)
 	ent = ent or self:GetOwner()
 
+	if ent:IsPlayer() then
+		local allowed, reason = pac.CallHook("CanChangeSize", ply, scale)
+		if allowed == false then
+			if CurTime() > (self._nextRemindScaleBlocked or 0) then
+				pac.Message(reason or "the server doesn't want you to change your scale for some reason")
+				self._nextRemindScaleBlocked = CurTime() + 60
+			end
+			return
+		end
+	end
+
 	if ent:IsValid() then
 		if self.UseLegacyScale then
 			if ent:IsPlayer() or ent:IsNPC() then

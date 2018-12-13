@@ -8,8 +8,18 @@ if CLIENT then
 		net.SendToServer()
 	end
 end
-
 if SERVER then
+
+	function pacx.GetResetModel(ply)
+		local hookModel = hook.Run("pac_ResetModel", ply)
+		return hookModel or player_manager.TranslatePlayerModel(ply:GetInfo("cl_playermodel"))
+	end
+
+	function pacx.ResetPlayerMmodel(ply)
+		local model = pacx.GetResetModel(ply)
+		ply:SetModel(model)
+	end
+
 	function pacx.SetPlayerModel(ply, model)
 		if model:find("^http") then
 			pac.Message(ply, " wants to use ", model, " as player model")
@@ -24,12 +34,12 @@ if SERVER then
 			end, ply)
 		else
 			if model == "" then
-				model = player_manager.TranslatePlayerModel(ply:GetInfo("cl_playermodel"))
+				model = pacx.GetResetModel(ply)
 			else
 				model = player_manager.AllValidModels()[model] or model
 
 				if not util.IsValidModel(model) then
-					model = player_manager.TranslatePlayerModel(ply:GetInfo("cl_playermodel"))
+					model = pacx.GetResetModel(ply)
 				end
 			end
 
@@ -41,12 +51,7 @@ if SERVER then
 
 	local ALLOW_TO_CHANGE_MODEL = pacx.AddServerModifier("model", function(data, owner)
 		if not data then
-			local resetModel = pac.CallHook("ResetModel", owner)
-
-			if resetModel != false then
-				local model = resetModel or player_manager.TranslatePlayerModel(owner:GetInfo("cl_playermodel"))
-				pacx.SetPlayerModel(owner, resetModel)
-			end
+			pacx.ResetPlayerMmodel(owner)
 		else
 			local model
 
@@ -62,7 +67,8 @@ if SERVER then
 
 			if model then
 				model = model:lower()
-				if hook.Run("PACApplyModel", owner, model) == false then return end
+				local allowed = hook.Run("PACApplyModel", owner, model)
+				if allowed == false then return end
 				pacx.SetPlayerModel(owner, model)
 			end
 		end

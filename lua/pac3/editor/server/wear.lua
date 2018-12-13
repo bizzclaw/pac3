@@ -346,8 +346,8 @@ local pac_submit_spam = CreateConVar('pac_submit_spam', '1', {FCVAR_NOTIFY, FCVA
 local pac_submit_limit = CreateConVar('pac_submit_limit', '30', {FCVAR_NOTIFY, FCVAR_ARCHIVE}, 'pac_submit spam limit')
 
 pace.PCallNetReceive(net.Receive, "pac_submit", function(len, ply)
-	if pac.CallHook("CanWearParts", ply) == false then
-		return
+	if hook.Run("pac_CanWearParts", ply) == false then
+		return false
 	end
 
 	if pac_submit_spam:GetBool() then
