@@ -7,8 +7,15 @@ if CLIENT then
 			net.WriteString(path or "")
 		net.SendToServer()
 	end
+
+	net.Receive("pac_recievemodel", function()
+		local ent = net.ReadEntity()
+		local mdl = net.ReadString()
+		ent:SetModel(mdl)
+	end)
 end
 if SERVER then
+	util.AddNetworkString("pac_recievemodel")
 
 	function pacx.GetResetModel(ply)
 		local hookModel = hook.Run("pac_ResetModel", ply)
@@ -21,14 +28,22 @@ if SERVER then
 	end
 
 	function pacx.SetPlayerModel(ply, model)
+
+
 		if model:find("^http") then
 			pac.Message(ply, " wants to use ", model, " as player model")
 			pac.DownloadMDL(model, function(path)
 				pac.Message(model, " downloaded for ", ply)
 
 				ply:SetModel(path)
+				net.Start("pac_recievemodel")
+				net.WriteEntity(ply)
+				net.WriteString(path)
+				net.Send(ply)
+
 				ply.pac_last_modifier_model = path:lower()
 				ply.pac_url_playermodel = true
+
 			end, function(err)
 				pac.Message(err)
 			end, ply)
@@ -44,6 +59,11 @@ if SERVER then
 			end
 
 			ply:SetModel(model)
+			net.Start("pac_recievemodel")
+			net.WriteEntity(ply)
+			net.WriteString(model)
+			net.Send(ply)
+
 			ply.pac_last_modifier_model = model:lower()
 			ply.pac_url_playermodel = false
 		end
@@ -80,6 +100,10 @@ if SERVER then
 		for _, ply in ipairs(player.GetAll()) do
 			if ply.pac_last_modifier_model and ply:GetModel():lower() ~= ply.pac_last_modifier_model then
 				ply:SetModel(ply.pac_last_modifier_model)
+				net.Start("pac_recievemodel")
+				net.WriteEntity(ply)
+				net.WriteString(ply.pac_last_modifier_model)
+				net.Send(ply)
 			end
 		end
 	end)
