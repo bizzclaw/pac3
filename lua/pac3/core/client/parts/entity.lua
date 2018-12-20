@@ -430,11 +430,11 @@ function PART:SetModel(path)
 		local ent = self:GetOwner()
 
 		if ent:IsValid() then
-			if ent == pac.LocalPlayer and pacx and pacx.SetModel then
-				pacx.SetModel(self.Model)
-			else
-				ent:SetModel(self.Model)
-			end
+			-- if ent == pac.LocalPlayer and pacx and pacx.SetModel then
+			-- 	pacx.SetModel(self.Model)
+			-- else
+			-- 	ent:SetModel(self.Model)
+			-- end
 
 			pac.RunNextFrame('entity updatemat ' .. tostring(ent), function()
 				if not ent:IsValid() or not self:IsValid() then return end
