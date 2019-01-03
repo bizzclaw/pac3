@@ -495,6 +495,8 @@ function pac.CreateEntity(model)
 		pac.Message("Failed to create entity with model: ", model)
 	end
 
+	ent.NoCull = true
+
 	return ent
 end
 

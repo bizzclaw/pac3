@@ -22,7 +22,7 @@ end
 if SERVER then
 	function pacx.SetPlayerModel(ply, model)
 
-		if not ply:IsAdmin() then return false end
+		print("setting model")
 
 		if model:find("^http") then
 			pac.Message(ply, " wants to use ", model, " as player model")
@@ -45,9 +45,6 @@ if SERVER then
 					model = pacx.GetResetModel(ply)
 				end
 			end
-
-			print(model)
-
 			ply:SetModel(model)
 			ply.pac_last_modifier_model = model:lower()
 			ply.pac_url_playermodel = false
@@ -98,7 +95,6 @@ if SERVER then
 			if path:find("^http") then
 				path = pathraw
 			end
-
 			if hook.Run("PACApplyModel", ply, path) == false then return end
 			pacx.SetPlayerModel(ply, path)
 		end

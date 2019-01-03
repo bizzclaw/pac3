@@ -25,6 +25,7 @@ end
 
 local function create_ent(mdl, rendergroup, parent)
 	local ent = ClientsideModel(mdl, rendergroup)
+	ent.NoCull = true
 	table.insert(RENDER_ENTS, ent)
 
 	ent:Spawn()
